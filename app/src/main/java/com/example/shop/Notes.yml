@@ -1,0 +1,4 @@
+Notes:
+  - Used UNIQE constraint for email so that no two users can have same email.
+  - Used DEFAULT CURRENT_TIMESTAMP for created_at and updated_at so that we don't have to pass it from the client side.
+

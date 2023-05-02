@@ -1,0 +1,54 @@
+package com.example.shop;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+
+/**
+ * Manages user session data using SharedPreferences.
+ */
+public class SessionManager {
+    private static final String USER_PREFS = "user_prefs";
+    private static final String IS_LOGGED_IN = "is_logged_in";
+    private static final String EMAIL = "email";
+
+    private SharedPreferences sharedPreferences;
+
+    /**
+     * Initializes the SessionManager with the given context.
+     *
+     * @param context the context for accessing SharedPreferences
+     */
+    public SessionManager(Context context) {
+        sharedPreferences = context.getSharedPreferences(USER_PREFS, Context.MODE_PRIVATE);
+    }
+
+    /**
+     * Logs in the user and saves their email in SharedPreferences.
+     *
+     * @param email the email address of the logged-in user
+     */
+    public void loginUser(String email) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(IS_LOGGED_IN, true);
+        editor.putString(EMAIL, email);
+        editor.apply();
+    }
+
+    /**
+     * Checks if the user is already logged in.
+     *
+     * @return true if the user is logged in, false otherwise
+     */
+    public boolean isLoggedIn() {
+        return sharedPreferences.getBoolean(IS_LOGGED_IN, false);
+    }
+
+    /**
+     * Retrieves the email of the logged-in user.
+     *
+     * @return the email address of the logged-in user, or an empty string if no user is logged in
+     */
+    public String getUserEmail() {
+        return sharedPreferences.getString(EMAIL, "");
+    }
+}
