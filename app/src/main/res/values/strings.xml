@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Shop</string>
     <dimen name="space_around">30dp</dimen>
+    <dimen name="space_around2">8dp</dimen>
 </resources>

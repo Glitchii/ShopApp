@@ -1,7 +1,10 @@
 package com.example.shop;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+
+import androidx.annotation.Nullable;
 
 /**
  * Manages user session data using SharedPreferences.
@@ -10,8 +13,8 @@ public class SessionManager {
     private static final String USER_PREFS = "user_prefs";
     private static final String IS_LOGGED_IN = "is_logged_in";
     private static final String EMAIL = "email";
-
     private SharedPreferences sharedPreferences;
+    private Context context;
 
     /**
      * Initializes the SessionManager with the given context.
@@ -50,5 +53,11 @@ public class SessionManager {
      */
     public String getUserEmail() {
         return sharedPreferences.getString(EMAIL, "");
+    }
+
+    public void logoutUser() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
     }
 }

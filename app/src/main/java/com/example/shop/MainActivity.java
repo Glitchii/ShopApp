@@ -15,18 +15,18 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    SessionManager sessionManager;
     private SQLiteHelper sqLiteHelper;
     private EditText etEmail, etPassword;
     private Button btnLogin, btnRegister;
-    SessionManager sessionManager = new SessionManager(MainActivity.this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize SQLiteHelper
         sqLiteHelper = new SQLiteHelper(this);
+        sessionManager = new SessionManager(this);
 
         // // Insert a test user
         // sqLiteHelper.addUser("John Doe", "john.doe@example.com", "password123", "Reading, Hiking", "12345", "68 Bedford Rd.");
@@ -50,9 +50,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-            String userEmail = sharedPreferences.getString("email", "");
-            // TODO
+            // Redirect to the DashboardActivity
+            Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 }

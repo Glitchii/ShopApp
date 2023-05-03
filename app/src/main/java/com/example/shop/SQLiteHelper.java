@@ -111,12 +111,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.close();
         return newRowId;
     }
-    
+
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM users", null);
-    
+
         if (cursor.moveToFirst()) {
             do {
                 User user = new User(
@@ -131,10 +131,38 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 users.add(user);
             } while (cursor.moveToNext());
         }
-    
+
         cursor.close();
         db.close();
         return users;
+    }
+
+    /**
+     * Retrieves a User object containing all user details for a given email address.
+     *
+     * @param email The email address of the user to be retrieved.
+     * @return A User object containing all the user details if the email address exists in the database, otherwise, returns null.
+     */
+    public User getUserByEmail(String email) {
+        User user = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM users WHERE email = ?", new String[]{email});
+
+        if (cursor.moveToFirst()) {
+            user = new User(
+                    cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("full_name")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("email")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("password")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("hobbies")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("postcode")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("address"))
+            );
+        }
+
+        cursor.close();
+        db.close();
+        return user;
     }
 
     /**
@@ -157,5 +185,60 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             db.close();
             return false;
         }
+    }
+
+    /**
+     * Fetches all products from the database and returns them as a list of Product objects.
+     *
+     * @return List of Product objects containing all products in the database.
+     */
+    public List<Product> getAllProducts() {
+        List<Product> products = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM products", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Product product = new Product(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("category_id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("name")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("price")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("list_price")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("retail_price"))
+                );
+                products.add(product);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return products;
+    }
+
+    /**
+     * Adds a new product to the database with the given details.
+     *
+     * @param categoryId The category ID of the product.
+     * @param name The name of the product.
+     * @param description The description of the product.
+     * @param price The price of the product.
+     * @param listPrice The list price of the product.
+     * @param retailPrice The retail price of the product.
+     * @return The row ID of the newly inserted product, or -1 if an error occurred.
+     */
+    public long addProduct(int categoryId, String name, String description, double price, double listPrice, double retailPrice) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("category_id", categoryId);
+        contentValues.put("name", name);
+        contentValues.put("description", description);
+        contentValues.put("price", price);
+        contentValues.put("list_price", listPrice);
+        contentValues.put("retail_price", retailPrice);
+        long newRowId = db.insert("products", null, contentValues);
+        db.close();
+        return newRowId;
     }
 }

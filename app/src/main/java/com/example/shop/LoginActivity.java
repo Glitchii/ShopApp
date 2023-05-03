@@ -54,23 +54,18 @@ public class LoginActivity extends AppCompatActivity {
     private void loginUser() {
         String email = etEmail.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
+        boolean isUserValid = sqLiteHelper.checkUserCredentials(email, password);
 
-        if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-            boolean isUserValid = sqLiteHelper.checkUserCredentials(email, password);
-
-            if (isUserValid) {
-                Toast.makeText(this, "User logged in successfully!", Toast.LENGTH_SHORT).show();
-                SessionManager sessionManager = new SessionManager(LoginActivity.this);
-                sessionManager.loginUser(email);
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(this, "Invalid email or password.", Toast.LENGTH_SHORT).show();
-            }
-        } else {
+        if (TextUtils.isEmpty(email) && TextUtils.isEmpty(password))
             Toast.makeText(this, "Please enter your email and password.", Toast.LENGTH_SHORT).show();
+        else if (!isUserValid)
+            Toast.makeText(this, "Invalid email or password.", Toast.LENGTH_SHORT).show();
+        else {
+            SessionManager sessionManager = new SessionManager(LoginActivity.this);
+            sessionManager.loginUser(email);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         }
     }
 }
-
