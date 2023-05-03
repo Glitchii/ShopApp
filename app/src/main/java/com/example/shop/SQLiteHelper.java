@@ -241,4 +241,151 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.close();
         return newRowId;
     }
+
+    /**
+     * Fetches all categories from the database and returns them as a list of Category objects.
+     *
+     * @return List of Category objects containing all categories in the database.
+     */
+    public List<Category> getAllCategories() {
+        List<Category> categories = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM categories", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Category category = new Category(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                );
+                categories.add(category);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return categories;
+    }
+
+    /**
+     * Adds a new category to the database with the given details.
+     *
+     * @param name The name of the category.
+     * @param description The description of the category.
+     * @return The row ID of the newly inserted category, or -1 if an error occurred.
+     */
+    public long addCategory(String name, String description) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", name);
+        contentValues.put("description", description);
+        long newRowId = db.insert("categories", null, contentValues);
+        db.close();
+        return newRowId;
+    }
+
+    public List<Order> getAllOrdersByUserId(int userId) {
+        List<Order> orders = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM orders WHERE user_id = ?", new String[]{String.valueOf(userId)});
+    
+        if (cursor.moveToFirst()) {
+            do {
+                Order order = new Order(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("user_id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("status")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("date_created"))
+                );
+                orders.add(order);
+            } while (cursor.moveToNext());
+        }
+    
+        cursor.close();
+        db.close();
+        return orders;
+    }
+    
+
+    /**
+     * Fetches all orders from the database and returns them as a list of Order objects.
+     *
+     * @return List of Order objects containing all orders in the database.
+     */
+    public List<Order> getAllOrders() {
+        List<Order> orders = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM orders", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Order order = new Order(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("user_id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("status")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("date_created"))
+                );
+                orders.add(order);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return orders;
+    }
+
+    /**
+     * Adds a new order to the database with the given details.
+     *
+     * @param userId The user ID of the order.
+     * @param date The date of the order.
+     * @param status The status of the order.
+     * @param address The address of the order.
+     * @return The row ID of the newly inserted order, or -1 if an error occurred.
+     */
+    public long addOrder(int userId, String date, String status, String address) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("user_id", userId);
+        contentValues.put("date", date);
+        contentValues.put("status", status);
+        long newRowId = db.insert("orders", null, contentValues);
+        db.close();
+        return newRowId;
+    }
+
+    public int deleteOrder(int orderId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsAffected = db.delete("orders", "id = ?", new String[]{String.valueOf(orderId)});
+        db.close();
+        return rowsAffected;
+    }
+
+    public int updateOrderStatus(int orderId, String status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("status", status);
+        int rowsAffected = db.update("orders", contentValues, "id = ?", new String[]{String.valueOf(orderId)});
+        db.close();
+        return rowsAffected;
+    }
+
+    /**
+     * Adds a new order item to the database with the given details.
+     *
+     * @param orderId The order ID of the order item.
+     * @param productId The product ID of the order item.
+     * @param quantity The quantity of the order item.
+     * @return The row ID of the newly inserted order item, or -1 if an error occurred.
+     */
+    public long addOrderItem(int orderId, int productId, int quantity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("order_id", orderId);
+        contentValues.put("product_id", productId);
+        contentValues.put("quantity", quantity);
+        long newRowId = db.insert("order_items", null, contentValues);
+        db.close();
+        return newRowId;
+    }
 }
