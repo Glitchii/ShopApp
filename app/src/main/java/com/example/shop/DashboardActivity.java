@@ -13,18 +13,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.Random;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private TextView tvWelcomeMessage;
     private Button btnLogout;
-    
+
     private SessionManager sessionManager;
-    private DashboardItemAdapter itemAdapter;
-    private RecyclerView rvItems;
     private SQLiteHelper sqLiteHelper;
 
     @Override
@@ -32,15 +30,21 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        tvWelcomeMessage = findViewById(R.id.welcome_msg);
         btnLogout = findViewById(R.id.btn_logout);
 
         sessionManager = new SessionManager(this);
         sqLiteHelper = new SQLiteHelper(this);
-
-        // Add test data to the database
-        // sqLiteHelper.addCategory("racing", "Racing games");
-        // sqLiteHelper.addProduct(1, "F1 2019", "F1 2019 is the official video game of the 2019 Formula One and Formula 2 Championships developed and published by Codemasters.", 59.99, 59.99, 59.99);
+        
+        // // Add random products and name using Random
+        // Random random = new Random();
+        // for (int i = 0; i < 2; i++) {
+        //     sqLiteHelper.addCategory("category" + i, "Category " + i);
+        //     for (int j = 0; j < 2; j++) {
+        //         sqLiteHelper.addProduct(i + 1, "product" + j, "Product " + j,
+        //                 random.nextDouble() * 100, random.nextDouble() * 100, random.nextDouble() *
+        //                         100);
+        //     }
+        // }
 
         // Add the ProductsFragment to the products_fragment_container
         ProductsFragment productsFragment = new ProductsFragment();
@@ -49,10 +53,18 @@ public class DashboardActivity extends AppCompatActivity {
                 .commit();
 
         btnLogout.setOnClickListener(v -> {
-                sessionManager.logoutUser();
-                Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+            sessionManager.logoutUser();
+            Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         });
+
+        Button btnBasket = findViewById(R.id.btn_basket);
+        btnBasket.setOnClickListener(v -> {
+            // Start the BasketActivity
+            Intent intent = new Intent(DashboardActivity.this, BasketActivity.class);
+            startActivity(intent);
+        });
+
     }
 }

@@ -81,4 +81,20 @@ public class SessionManager {
         return sharedPreferences.getString("basket", "");
     }
 
+    /**
+     * Removes the specified product from the user's basket.
+     * 
+     * @param product the product to be removed
+     */
+    public void removeFromBasket(Product product) {
+        String basket = getUserBasket();
+        String[] basketItems = basket.split(",");
+        String newBasket = "";
+
+        for (String item : basketItems)
+            if (!item.equals(String.valueOf(product.getId())))
+                newBasket += item + ",";
+
+        saveUserBasket(newBasket);
+    }
 }

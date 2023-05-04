@@ -16,10 +16,31 @@ public class DashboardItemAdapter extends RecyclerView.Adapter<DashboardItemAdap
 
     private Context context;
     private List<Product> products;
+    private boolean fromBasketActivity;
 
-    public DashboardItemAdapter(Context context, List<Product> products) {
+    /**
+     * Constructs a new DashboardItemAdapter with the specified context, list of products, and a flag indicating
+     * if the adapter is being used in the BasketActivity.
+     *
+     * @param context           The context in which the adapter is running.
+     * @param products          The list of products to be displayed.
+     * @param fromBasketActivity A boolean flag indicating if the adapter is being used in the BasketActivity.
+     */
+    public DashboardItemAdapter(Context context, List<Product> products, boolean fromBasketActivity) {
         this.context = context;
         this.products = products;
+        this.fromBasketActivity = fromBasketActivity;
+    }
+
+    /**
+     * Constructs a new DashboardItemAdapter with the specified context and list of products.
+     * Assumes that the adapter is not being used in the BasketActivity.
+     *
+     * @param context  The context in which the adapter is running.
+     * @param products The list of products to be displayed.
+     */
+    public DashboardItemAdapter(Context context, List<Product> products) {
+        this(context, products, false);
     }
 
     @NonNull
@@ -42,6 +63,7 @@ public class DashboardItemAdapter extends RecyclerView.Adapter<DashboardItemAdap
             Intent intent = new Intent(context, ProductDetailsActivity.class);
             // Pass the product ID or the entire Product object
             intent.putExtra("PRODUCT_ID", product.getId());
+            intent.putExtra("FROM_BASKET_ACTIVITY", fromBasketActivity);
             context.startActivity(intent);
         });
     }

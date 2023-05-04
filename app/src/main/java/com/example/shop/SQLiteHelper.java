@@ -277,6 +277,34 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return product;
     }
 
+    public List<Product> getProductsByIds(List<String> ids) {
+        List<Product> products = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+    
+        for (String id : ids) {
+            Cursor cursor = db.rawQuery("SELECT * FROM products WHERE id = ?", new String[]{id});
+
+            if (cursor.moveToFirst()) {
+                Product product = new Product(
+                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("category_id")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("name")),
+                        cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("price")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("list_price")),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow("retail_price"))
+                );
+                products.add(product);
+            }
+
+            cursor.close();
+        }
+
+        db.close();
+        return products;
+    }
+    
+
     /**
      * Deletes a product from the database with the given ID.
      * @param id The ID of the product to be deleted.
@@ -407,14 +435,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
      * @param userId The user ID of the order.
      * @param date The date of the order.
      * @param status The status of the order.
-     * @param address The address of the order.
      * @return The row ID of the newly inserted order, or -1 if an error occurred.
      */
-    public long addOrder(int userId, String date, String status, String address) {
+    public long addOrder(int userId, String date, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("user_id", userId);
-        contentValues.put("date", date);
+        contentValues.put("date_created", date);
         contentValues.put("status", status);
         long newRowId = db.insert("orders", null, contentValues);
         db.close();

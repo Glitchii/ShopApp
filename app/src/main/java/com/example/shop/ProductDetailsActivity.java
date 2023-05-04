@@ -8,6 +8,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class ProductDetailsActivity extends AppCompatActivity {
 
     private TextView tvProductName;
@@ -16,6 +20,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private Button btnEdit;
     private Button btnDelete;
     private Button btnAddToBasket;
+    private Button btnRemove;
+    private Button btnOrder;
 
     private SQLiteHelper sqLiteHelper;
     private SessionManager sessionManager;
@@ -32,15 +38,28 @@ public class ProductDetailsActivity extends AppCompatActivity {
         btnEdit = findViewById(R.id.btn_edit);
         btnDelete = findViewById(R.id.btn_delete);
         btnAddToBasket = findViewById(R.id.btn_add_to_basket);
-        
+
+        btnRemove = findViewById(R.id.btn_remove); // Remove from basket button
+        btnOrder = findViewById(R.id.btn_order);
+
+        Intent intent = getIntent();
+        int productId = intent.getIntExtra("PRODUCT_ID", 0);
+        boolean fromBasketActivity = intent.getBooleanExtra("FROM_BASKET_ACTIVITY", false);
+
+        if (fromBasketActivity) {
+            // Hide the product page buttons if the user is coming from the basket activity
+            btnAddToBasket.setVisibility(View.GONE);
+            btnDelete.setVisibility(View.GONE);
+            btnEdit.setVisibility(View.GONE);
+
+            // Show basket page buttons
+            btnRemove.setVisibility(View.VISIBLE);
+            btnOrder.setVisibility(View.VISIBLE);
+        }
 
         // Initialize SQLiteHelper and SessionManager
         sqLiteHelper = new SQLiteHelper(this);
         sessionManager = new SessionManager(this);
-
-        // Get the passed product ID from the intent
-        Intent intent = getIntent();
-        int productId = intent.getIntExtra("PRODUCT_ID", 0);
 
         // Fetch the product from the database
         Product product = sqLiteHelper.getProductById(productId);
@@ -49,9 +68,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
         tvProductName.setText(product.getName());
         tvProductDescription.setText(product.getDescription());
         tvProductPrice.setText(String.format("£%.2f", product.getPrice()));
-
-        // Set a click listener for the add to basket button
-        btnAddToBasket.setOnClickListener(v -> addToBasket(product.getId()));
 
         // Check if the user is an admin
         String userEmail = sessionManager.getUserEmail();
@@ -76,12 +92,42 @@ public class ProductDetailsActivity extends AppCompatActivity {
             btnEdit.setVisibility(View.GONE);
             btnDelete.setVisibility(View.GONE);
         }
+
+        // Set a click listener for the add to basket button
+        btnAddToBasket.setOnClickListener(v -> addToBasket(product.getId()));
+
+        // Click listener to remove item from basket
+        btnRemove.setOnClickListener(v -> {
+            sessionManager.removeFromBasket(product);
+            Toast.makeText(ProductDetailsActivity.this, "Product removed from basket", Toast.LENGTH_SHORT).show();
+
+            Intent mainActivityIntent = new Intent(ProductDetailsActivity.this, MainActivity.class);
+            // https://developer.android.com/reference/android/content/Intent#FLAG_ACTIVITY_CLEAR_TOP
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainActivityIntent);
+        });
+
+        btnOrder.setOnClickListener(v -> {
+            // Create a date string for the current date and time
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            String currentDate = sdf.format(new Date());
+
+            // Add the order to the database and get its ID
+            long orderId = sqLiteHelper.addOrder(user.getId(), currentDate, "New");
+
+            // Add the corresponding order item to the database (assuming a quantity of 1)
+            sqLiteHelper.addOrderItem((int) orderId, product.getId(), 1);
+
+            Toast.makeText(ProductDetailsActivity.this, "Order placed", Toast.LENGTH_SHORT).show();
+
+            Intent mainActivityIntent = new Intent(ProductDetailsActivity.this, MainActivity.class);
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainActivityIntent);
+        });
     }
 
     private void deleteProduct(Product product) {
-        // Assuming you have a method in your SQLiteHelper class to delete a product by
-        // its ID
-        // and a method to get the current product's ID
+        // Assuming you have a method in your SQLiteHelper class to delete a product by its ID and a method to get the current product's ID
         sqLiteHelper.deleteProduct(product.getId());
 
         // Display a message to inform the user that the product has been deleted
@@ -89,7 +135,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
         // Start the MainActivity to update recycler view
         Intent intent = new Intent(ProductDetailsActivity.this, MainActivity.class);
-        // https://developer.android.com/reference/android/content/Intent#FLAG_ACTIVITY_CLEAR_TOP
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
@@ -100,20 +145,14 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private void addToBasket(int productId) {
         // Get the user's current basket from SharedPreferences
         String basketString = sessionManager.getUserBasket();
-    
-        // Check if the basket is empty
-        if (basketString.isEmpty()) {
-            basketString = String.valueOf(productId);
-        } else {
-            // If not empty, add the product ID to the basket
-            basketString += "," + productId;
-        }
-    
+
+        // Add the new product to the basket
+        basketString = basketString.isEmpty() ? String.valueOf(productId) : basketString + "," + productId;
+
         // Save the updated basket in SharedPreferences
         sessionManager.saveUserBasket(basketString);
-    
-        // Show a message to inform the user that the product has been added to the basket
+
         Toast.makeText(ProductDetailsActivity.this, "Product added to basket", Toast.LENGTH_SHORT).show();
     }
-    
+
 }

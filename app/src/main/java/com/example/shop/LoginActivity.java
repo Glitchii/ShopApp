@@ -29,22 +29,12 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btn_register);
 
         sqLiteHelper = new SQLiteHelper(this);
-
         sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginUser();
-            }
-        });
-
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
+        btnLogin.setOnClickListener(v -> loginUser());
+        btnRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
         });
     }
 
