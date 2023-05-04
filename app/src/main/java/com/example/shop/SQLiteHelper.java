@@ -39,7 +39,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     "password TEXT NOT NULL," +
                     "hobbies TEXT," +
                     "postcode TEXT," +
-                    "address TEXT" +
+                    "address TEXT," +
+                    "is_admin INTEGER DEFAULT 0" +
                 ");";
         db.execSQL(createUsersTable);
 
@@ -98,7 +99,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long addUser(String fullName, String email, String password, String hobbies, String postcode, String address) {
+    public long addUser(String fullName, String email, String password, String hobbies, String postcode, String address, boolean isAdmin) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("full_name", fullName);
@@ -107,9 +108,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         contentValues.put("hobbies", hobbies);
         contentValues.put("postcode", postcode);
         contentValues.put("address", address);
+        contentValues.put("is_admin", isAdmin);
         long newRowId = db.insert("users", null, contentValues);
         db.close();
         return newRowId;
+    }
+
+    public long addUser(String fullName, String email, String password, String hobbies, String postcode, String address) {
+        return addUser(fullName, email, password, hobbies, postcode, address, false);
     }
 
     public List<User> getAllUsers() {
@@ -126,7 +132,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                         cursor.getString(cursor.getColumnIndexOrThrow("password")),
                         cursor.getString(cursor.getColumnIndexOrThrow("hobbies")),
                         cursor.getString(cursor.getColumnIndexOrThrow("postcode")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("address"))
+                        cursor.getString(cursor.getColumnIndexOrThrow("address")),
+                        cursor.getInt(cursor.getColumnIndexOrThrow("is_admin"))
                 );
                 users.add(user);
             } while (cursor.moveToNext());
@@ -156,7 +163,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     cursor.getString(cursor.getColumnIndexOrThrow("password")),
                     cursor.getString(cursor.getColumnIndexOrThrow("hobbies")),
                     cursor.getString(cursor.getColumnIndexOrThrow("postcode")),
-                    cursor.getString(cursor.getColumnIndexOrThrow("address"))
+                    cursor.getString(cursor.getColumnIndexOrThrow("address")),
+                    cursor.getInt(cursor.getColumnIndexOrThrow("is_admin"))
             );
         }
 
@@ -240,6 +248,65 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         long newRowId = db.insert("products", null, contentValues);
         db.close();
         return newRowId;
+    }
+
+    /**
+     * Retrieves a Product object containing all product details for a given product ID.
+     * @param id The ID of the product to be retrieved.
+     * @return A Product object containing all the product details if the product ID exists in the database, otherwise, returns null.
+     */
+    public Product getProductById(int id) {
+        Product product = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM products WHERE id = ?", new String[]{String.valueOf(id)});
+
+        if (cursor.moveToFirst()) {
+            product = new Product(
+                    cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    cursor.getInt(cursor.getColumnIndexOrThrow("category_id")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("name")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("description")),
+                    cursor.getDouble(cursor.getColumnIndexOrThrow("price")),
+                    cursor.getDouble(cursor.getColumnIndexOrThrow("list_price")),
+                    cursor.getDouble(cursor.getColumnIndexOrThrow("retail_price"))
+            );
+        }
+
+        cursor.close();
+        db.close();
+        return product;
+    }
+
+    /**
+     * Deletes a product from the database with the given ID.
+     * @param id The ID of the product to be deleted.
+     * @return The number of rows affected if a product was deleted, otherwise, returns 0.
+     */
+    public int deleteProduct(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsAffected = db.delete("products", "id = ?", new String[]{String.valueOf(id)});
+        db.close();
+        return rowsAffected;
+    }
+
+    // updateProduct(product.getId(), updatedName, updatedDescription, updatedPrice);
+    /**
+     * Updates the details of a product with the given ID.
+     * @param id The ID of the product to be updated.
+     * @param name The updated name of the product.
+     * @param description The updated description of the product.
+     * @param price The updated price of the product.
+     * @return The number of rows affected if a product was updated, otherwise, returns 0.
+     */
+    public int updateProduct(int id, String name, String description, double price) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", name);
+        contentValues.put("description", description);
+        contentValues.put("price", price);
+        int rowsAffected = db.update("products", contentValues, "id = ?", new String[]{String.valueOf(id)});
+        db.close();
+        return rowsAffected;
     }
 
     /**

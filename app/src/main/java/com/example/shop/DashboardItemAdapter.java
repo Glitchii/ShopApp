@@ -1,6 +1,7 @@
 package com.example.shop;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,18 +29,21 @@ public class DashboardItemAdapter extends RecyclerView.Adapter<DashboardItemAdap
         return new ProductViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(ProductViewHolder holder, int position) {
         Product product = products.get(position);
 
-        // Assuming you have TextViews with the following IDs in your item_dashboard.xml layout:
-        // - tv_product_name
-        // - tv_product_description
-        // - tv_product_price
         holder.tvProductName.setText(product.getName());
         holder.tvProductDescription.setText(product.getDescription());
-        holder.tvProductPrice.setText(String.format("Price: $%.2f", product.getPrice()));
+        holder.tvProductPrice.setText(String.format("Price: £%.2f", product.getPrice()));
+
+        // Set an onClickListener for the itemView
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductDetailsActivity.class);
+            // Pass the product ID or the entire Product object
+            intent.putExtra("PRODUCT_ID", product.getId());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -60,4 +64,3 @@ public class DashboardItemAdapter extends RecyclerView.Adapter<DashboardItemAdap
         }
     }
 }
-    

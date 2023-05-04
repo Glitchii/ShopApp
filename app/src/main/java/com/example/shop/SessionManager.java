@@ -60,4 +60,25 @@ public class SessionManager {
         editor.clear();
         editor.apply();
     }
+
+    /**
+     * Saves the user's basket in SharedPreferences.
+     * 
+     * @param basket the user's basket
+     */
+    public void saveUserBasket(String basket) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("basket", basket);
+        editor.apply();
+    }
+
+    /**
+     * Retrieves the user's basket from SharedPreferences.
+     * 
+     * @return the user's basket, or an empty string if no basket is saved
+     */
+    public String getUserBasket() {
+        return sharedPreferences.getString("basket", "");
+    }
+
 }
