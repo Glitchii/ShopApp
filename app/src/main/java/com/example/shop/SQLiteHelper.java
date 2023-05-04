@@ -482,4 +482,29 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.close();
         return newRowId;
     }
+
+    public List<Order> getOrdersByUser(int userId, boolean isAdmin) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<Order> orders = new ArrayList<>();
+
+        String selection = isAdmin ? null : "user_id = ?";
+        String[] selectionArgs = isAdmin ? null : new String[] { String.valueOf(userId) };
+        Cursor cursor = db.query("orders", null, selection, selectionArgs, null, null, "date_created DESC");
+
+        if (cursor.moveToFirst())
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                int user_id = cursor.getInt(cursor.getColumnIndex("user_id"));
+                String status = cursor.getString(cursor.getColumnIndex("status"));
+                String date_created = cursor.getString(cursor.getColumnIndex("date_created"));
+
+                Order order = new Order(id, user_id, status, date_created);
+                orders.add(order);
+
+            } while (cursor.moveToNext());
+
+        cursor.close();
+        db.close();
+        return orders;
+    }
 }

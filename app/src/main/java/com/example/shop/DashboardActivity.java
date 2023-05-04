@@ -21,6 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 public class DashboardActivity extends AppCompatActivity {
 
     private Button btnLogout;
+    private Button btnBasket;
+    private Button btnOrders;
+    TextView welcomeView;
 
     private SessionManager sessionManager;
     private SQLiteHelper sqLiteHelper;
@@ -31,6 +34,9 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
         btnLogout = findViewById(R.id.btn_logout);
+        btnBasket = findViewById(R.id.btn_basket);
+        btnOrders = findViewById(R.id.btn_orders);
+        welcomeView = findViewById(R.id.welcome_msg);
 
         sessionManager = new SessionManager(this);
         sqLiteHelper = new SQLiteHelper(this);
@@ -52,6 +58,13 @@ public class DashboardActivity extends AppCompatActivity {
                 .add(R.id.products_fragment_container, productsFragment)
                 .commit();
 
+        // Fetch user data using the email
+        String userEmail = sessionManager.getUserEmail();
+        User user = sqLiteHelper.getUserByEmail(userEmail);
+
+        // Set welcome message with the user's full name
+        welcomeView.setText(String.format("Welcome, %s!", user.getFullName()));
+
         btnLogout.setOnClickListener(v -> {
             sessionManager.logoutUser();
             Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
@@ -59,12 +72,14 @@ public class DashboardActivity extends AppCompatActivity {
             finish();
         });
 
-        Button btnBasket = findViewById(R.id.btn_basket);
         btnBasket.setOnClickListener(v -> {
-            // Start the BasketActivity
             Intent intent = new Intent(DashboardActivity.this, BasketActivity.class);
             startActivity(intent);
         });
-
+        
+        btnOrders.setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, OrdersActivity.class);
+            startActivity(intent);
+        });
     }
 }

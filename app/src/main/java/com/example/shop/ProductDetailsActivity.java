@@ -70,8 +70,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         tvProductPrice.setText(String.format("£%.2f", product.getPrice()));
 
         // Check if the user is an admin
-        String userEmail = sessionManager.getUserEmail();
-        User user = sqLiteHelper.getUserByEmail(userEmail);
+        User user = sessionManager.getUserDetails(this);
+
         // boolean isAdmin = user.getIsAdmin() == 1;
         boolean isAdmin = true; // debug
 
@@ -113,12 +113,16 @@ public class ProductDetailsActivity extends AppCompatActivity {
             String currentDate = sdf.format(new Date());
 
             // Add the order to the database and get its ID
-            long orderId = sqLiteHelper.addOrder(user.getId(), currentDate, "New");
+
+            // For status, choose randomly between "shipped", "delivered", and "ordered", ...
+            String[] statuses = {"shipped", "delivered", "ordered", "pending"};
+            String status = statuses[(int) (Math.random() * statuses.length)];
+            long orderId = sqLiteHelper.addOrder(user.getId(), currentDate, status);
 
             // Add the corresponding order item to the database (assuming a quantity of 1)
             sqLiteHelper.addOrderItem((int) orderId, product.getId(), 1);
 
-            Toast.makeText(ProductDetailsActivity.this, "Order placed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ProductDetailsActivity.this, "Order placed, click 'orders' below to see it", Toast.LENGTH_LONG).show();
 
             Intent mainActivityIntent = new Intent(ProductDetailsActivity.this, MainActivity.class);
             mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -154,5 +158,4 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
         Toast.makeText(ProductDetailsActivity.this, "Product added to basket", Toast.LENGTH_SHORT).show();
     }
-
 }

@@ -6,7 +6,7 @@ public class Order {
     private String status;
     private String dateCreated;
 
-    public Order(int id, int userId, String dateCreated, String status) {
+    public Order(int id, int userId, String status, String dateCreated) {
         this.id = id;
         this.userId = userId;
         this.status = status;

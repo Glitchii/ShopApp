@@ -7,8 +7,8 @@ public class User {
     private String password;
     private String hobbies;
     private String postcode;
-    private int isAdmin;
     private String address;
+    private boolean isAdmin;
 
     public User(int id, String fullName, String email, String password, String hobbies, String postcode, String address, int isAdmin) {
         this.id = id;
@@ -18,7 +18,12 @@ public class User {
         this.hobbies = hobbies;
         this.postcode = postcode;
         this.address = address;
-        this.isAdmin = isAdmin;
+        // SQLite doesn't have boolean type  (https://www.sqlite.org/datatype3.html#boolean_datatype)
+        this.isAdmin = isAdmin == 1;
+    }
+
+    public boolean isAdmin() {
+        return isAdmin;
     }
 
     public int getId() {
@@ -28,9 +33,7 @@ public class User {
     public String getFullName() {
         return fullName;
     }
-    public int getIsAdmin() {
-        return isAdmin;
-    }
+
     public String getEmail() {
         return email;
     }
@@ -46,6 +49,7 @@ public class User {
     public String getPostcode() {
         return postcode;
     }
+
     public String getAddress() {
         return address;
     }

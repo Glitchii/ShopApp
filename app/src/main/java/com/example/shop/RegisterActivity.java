@@ -45,20 +45,25 @@ public class RegisterActivity extends AppCompatActivity {
         String postcode = etPostcode.getText().toString().trim();
         String address = etAddress.getText().toString().trim();
 
-        if (areFieldsFilledOut()) {
-            long newRowId = sqLiteHelper.addUser(fullName, email, password, hobbies, postcode, address);
-
-            if (newRowId > 0) {
-                Toast.makeText(this, "User registered successfully!", Toast.LENGTH_SHORT).show();
-                SessionManager sessionManager = new SessionManager(RegisterActivity.this);
-                sessionManager.loginUser(email);
-                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(this, "Error registering user. Please try again.", Toast.LENGTH_SHORT).show();
-            }
+        if (!areFieldsFilledOut()) {
+            Toast.makeText(this, "Please fill in all the fields.", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        long newRowId = sqLiteHelper.addUser(fullName, email, password, hobbies, postcode, address);
+
+        if (newRowId < 0) { // if (newRowId == -1)
+            Toast.makeText(this, "Error registering user. Please try again.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toast.makeText(this, "User registered successfully!", Toast.LENGTH_SHORT).show();
+        SessionManager sessionManager = new SessionManager(RegisterActivity.this);
+        sessionManager.loginUser(email);
+
+        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     /**
@@ -68,10 +73,10 @@ public class RegisterActivity extends AppCompatActivity {
      */
     private boolean areFieldsFilledOut() {
         return !TextUtils.isEmpty(etFullName.getText().toString().trim())
-               && !TextUtils.isEmpty(etEmail.getText().toString().trim())
-               && !TextUtils.isEmpty(etPassword.getText().toString().trim())
-               && !TextUtils.isEmpty(etHobbies.getText().toString().trim())
-               && !TextUtils.isEmpty(etPostcode.getText().toString().trim())
-               && !TextUtils.isEmpty(etAddress.getText().toString().trim());
+                && !TextUtils.isEmpty(etEmail.getText().toString().trim())
+                && !TextUtils.isEmpty(etPassword.getText().toString().trim())
+                && !TextUtils.isEmpty(etHobbies.getText().toString().trim())
+                && !TextUtils.isEmpty(etPostcode.getText().toString().trim())
+                && !TextUtils.isEmpty(etAddress.getText().toString().trim());
     }
 }

@@ -14,7 +14,6 @@ public class SessionManager {
     private static final String IS_LOGGED_IN = "is_logged_in";
     private static final String EMAIL = "email";
     private SharedPreferences sharedPreferences;
-    private Context context;
 
     /**
      * Initializes the SessionManager with the given context.
@@ -53,6 +52,21 @@ public class SessionManager {
      */
     public String getUserEmail() {
         return sharedPreferences.getString(EMAIL, "");
+    }
+
+    /**
+     * Retrieves the details of the logged-in user.
+     * 
+     * @return the details of the logged-in user, or null if no user is logged in
+     */
+    @Nullable
+    public User getUserDetails(Context context) {
+        String userEmail = getUserEmail();
+        if (userEmail.isEmpty())
+            return null;
+            
+        SQLiteHelper sqLiteHelper = new SQLiteHelper(context);
+        return sqLiteHelper.getUserByEmail(userEmail);
     }
 
     public void logoutUser() {

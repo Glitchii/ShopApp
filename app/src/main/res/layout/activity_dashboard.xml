@@ -18,15 +18,27 @@
         android:paddingHorizontal="@dimen/space_around2"
         android:layout_marginTop="16dp"/>
 
+    <View
+        android:id="@+id/dash_divider"
+        android:layout_width="409dp"
+        android:layout_height="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/welcome_msg"
+        android:background="?android:attr/listDivider"
+        tools:layout_editor_absoluteX="1dp"
+        android:layout_marginTop="20dp"
+        tools:layout_editor_absoluteY="30dp" />
+
     <FrameLayout
         android:id="@+id/products_fragment_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toTopOf="@+id/nav_buttons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcome_msg" />
-
+        app:layout_constraintTop_toBottomOf="@+id/dash_divider" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/nav_buttons"
@@ -48,6 +60,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Basket" />
+
+            <Button
+                android:id="@+id/btn_orders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Orders" />
 
             <Button
                 android:id="@+id/btn_logout"
