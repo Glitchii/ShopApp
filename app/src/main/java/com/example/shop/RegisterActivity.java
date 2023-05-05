@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -14,6 +15,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText etFullName, etEmail, etPassword, etHobbies, etPostcode, etAddress;
     Button btnRegister;
+    CheckBox cbAdmin;
     SQLiteHelper sqLiteHelper;
 
     @Override
@@ -28,7 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
         etPostcode = findViewById(R.id.et_postcode);
         etAddress = findViewById(R.id.et_address);
         btnRegister = findViewById(R.id.btn_register);
-
+        cbAdmin = findViewById(R.id.cb_admin);
         sqLiteHelper = new SQLiteHelper(this);
 
         btnRegister.setOnClickListener(v -> registerUser());
@@ -50,7 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        long newRowId = sqLiteHelper.addUser(fullName, email, password, hobbies, postcode, address);
+        long newRowId = sqLiteHelper.addUser(fullName, email, password, hobbies, postcode, address, cbAdmin.isChecked());
 
         if (newRowId < 0) { // if (newRowId == -1)
             Toast.makeText(this, "Error registering user. Please try again.", Toast.LENGTH_SHORT).show();

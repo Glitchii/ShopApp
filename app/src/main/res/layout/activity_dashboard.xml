@@ -11,7 +11,7 @@
         android:id="@+id/welcome_msg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome, User!"
+        android:text="Welcome, (placeholder name)"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -40,6 +40,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dash_divider" />
 
+    <!-- https://developer.android.com/develop/ui/views/components/floating-action-button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:src="@drawable/baseline_add_24"
+        app:borderWidth="0dp"
+        android:padding="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/products_fragment_container"
+        app:layout_constraintEnd_toEndOf="@+id/products_fragment_container"
+        android:backgroundTint="#2b2d30"
+        app:tint="@android:color/white" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/nav_buttons"
         android:layout_width="match_parent"
@@ -60,6 +75,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Basket" />
+
+            <Button
+                android:id="@+id/btn_categories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Categories" />
 
             <Button
                 android:id="@+id/btn_orders"

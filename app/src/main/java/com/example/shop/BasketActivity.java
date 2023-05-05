@@ -42,7 +42,7 @@ public class BasketActivity extends AppCompatActivity {
             totalCost += product.getPrice();
 
         // Update the total cost TextView
-        tvTotalCost.setText(String.format(Locale.getDefault(), "Total cost: $%.2f", totalCost));
+        tvTotalCost.setText(String.format(Locale.getDefault(), "Total cost: £%.2f", totalCost));
 
         // Create and set the adapter for the RecyclerView
         DashboardItemAdapter dashboardItemAdapter = new DashboardItemAdapter(this, basketProducts, true);

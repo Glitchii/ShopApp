@@ -22,6 +22,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private Button btnAddToBasket;
     private Button btnRemove;
     private Button btnOrder;
+    private TextView tvProductListPrice;
+    private TextView tvProductRetailPrice;
 
     private SQLiteHelper sqLiteHelper;
     private SessionManager sessionManager;
@@ -38,7 +40,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         btnEdit = findViewById(R.id.btn_edit);
         btnDelete = findViewById(R.id.btn_delete);
         btnAddToBasket = findViewById(R.id.btn_add_to_basket);
-
+        tvProductListPrice = findViewById(R.id.product_list_price);
+        tvProductRetailPrice = findViewById(R.id.product_retail_price);
         btnRemove = findViewById(R.id.btn_remove); // Remove from basket button
         btnOrder = findViewById(R.id.btn_order);
 
@@ -49,8 +52,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         if (fromBasketActivity) {
             // Hide the product page buttons if the user is coming from the basket activity
             btnAddToBasket.setVisibility(View.GONE);
-            btnDelete.setVisibility(View.GONE);
-            btnEdit.setVisibility(View.GONE);
+            btnDelete.setVisibility(Button.GONE);
+            btnEdit.setVisibility(Button.GONE);
 
             // Show basket page buttons
             btnRemove.setVisibility(View.VISIBLE);
@@ -65,33 +68,35 @@ public class ProductDetailsActivity extends AppCompatActivity {
         Product product = sqLiteHelper.getProductById(productId);
 
         // Set the product information in the UI elements
-        tvProductName.setText(product.getName());
-        tvProductDescription.setText(product.getDescription());
-        tvProductPrice.setText(String.format("£%.2f", product.getPrice()));
+        tvProductName.setText("Name: " + product.getName());
+        tvProductDescription.setText("Description: " + product.getDescription());
+        tvProductPrice.setText(String.format("Price £%.2f", product.getPrice()));
+        tvProductListPrice.setText(String.format("List Price: £%.2f", product.getListPrice()));
+        tvProductRetailPrice.setText(String.format("Retail Price: £%.2f", product.getRetailPrice()));
 
         // Check if the user is an admin
         User user = sessionManager.getUserDetails(this);
 
-        // boolean isAdmin = user.getIsAdmin() == 1;
-        boolean isAdmin = true; // debug
+        // Implement the edit and delete functionality
+        btnEdit.setOnClickListener(v -> {
+            if (!user.isAdmin()) {
+                Toast.makeText(this, "Admin action only. Register or login as admin", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-        // Show or hide the edit and delete buttons based on the user role
-        if (isAdmin) {
-            btnEdit.setVisibility(View.VISIBLE);
-            btnDelete.setVisibility(View.VISIBLE);
+            Intent editIntent = new Intent(ProductDetailsActivity.this, EditProductActivity.class);
+            editIntent.putExtra("PRODUCT_ID", product.getId());
+            startActivity(editIntent);
+        });
 
-            // Implement the edit and delete functionality
-            btnEdit.setOnClickListener(v -> {
-                Intent editIntent = new Intent(ProductDetailsActivity.this, EditProductActivity.class);
-                editIntent.putExtra("PRODUCT_ID", product.getId());
-                startActivity(editIntent);
-            });
+        btnDelete.setOnClickListener(v -> {
+            if (!user.isAdmin()) {
+                Toast.makeText(this, "Admin action only. Register or login as admin", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-            btnDelete.setOnClickListener(v -> deleteProduct(product));
-        } else {
-            btnEdit.setVisibility(View.GONE);
-            btnDelete.setVisibility(View.GONE);
-        }
+            deleteProduct(product);
+        });
 
         // Set a click listener for the add to basket button
         btnAddToBasket.setOnClickListener(v -> addToBasket(product.getId()));
@@ -122,7 +127,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
             // Add the corresponding order item to the database (assuming a quantity of 1)
             sqLiteHelper.addOrderItem((int) orderId, product.getId(), 1);
 
-            Toast.makeText(ProductDetailsActivity.this, "Order placed, click 'orders' below to see it", Toast.LENGTH_LONG).show();
+            Toast.makeText(ProductDetailsActivity.this, "Order placed, click 'orders' to see it", Toast.LENGTH_LONG).show();
 
             Intent mainActivityIntent = new Intent(ProductDetailsActivity.this, MainActivity.class);
             mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -141,8 +146,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
         Intent intent = new Intent(ProductDetailsActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-
-        // Close the current activity
         finish();
     }
 
@@ -156,6 +159,11 @@ public class ProductDetailsActivity extends AppCompatActivity {
         // Save the updated basket in SharedPreferences
         sessionManager.saveUserBasket(basketString);
 
-        Toast.makeText(ProductDetailsActivity.this, "Product added to basket", Toast.LENGTH_SHORT).show();
+        Toast.makeText(ProductDetailsActivity.this, "Added to basket, click 'basket' to see it", Toast.LENGTH_LONG).show();
+
+        Intent mainActivityIntent = new Intent(ProductDetailsActivity.this, MainActivity.class);
+        mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mainActivityIntent);
+        finish();
     }
 }

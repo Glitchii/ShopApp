@@ -18,12 +18,16 @@ import java.util.Random;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class DashboardActivity extends AppCompatActivity {
 
     private Button btnLogout;
     private Button btnBasket;
     private Button btnOrders;
-    TextView welcomeView;
+    private Button btnCategories;
+    private TextView welcomeView;
+    private FloatingActionButton fabAddProduct;
 
     private SessionManager sessionManager;
     private SQLiteHelper sqLiteHelper;
@@ -37,10 +41,12 @@ public class DashboardActivity extends AppCompatActivity {
         btnBasket = findViewById(R.id.btn_basket);
         btnOrders = findViewById(R.id.btn_orders);
         welcomeView = findViewById(R.id.welcome_msg);
+        fabAddProduct = findViewById(R.id.fab_add_product);
+        btnCategories = findViewById(R.id.btn_categories);
 
         sessionManager = new SessionManager(this);
         sqLiteHelper = new SQLiteHelper(this);
-        
+
         // // Add random products and name using Random
         // Random random = new Random();
         // for (int i = 0; i < 2; i++) {
@@ -53,10 +59,7 @@ public class DashboardActivity extends AppCompatActivity {
         // }
 
         // Add the ProductsFragment to the products_fragment_container
-        ProductsFragment productsFragment = new ProductsFragment();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.products_fragment_container, productsFragment)
-                .commit();
+        replaceProductsFragment();
 
         // Fetch user data using the email
         String userEmail = sessionManager.getUserEmail();
@@ -76,10 +79,34 @@ public class DashboardActivity extends AppCompatActivity {
             Intent intent = new Intent(DashboardActivity.this, BasketActivity.class);
             startActivity(intent);
         });
-        
+
         btnOrders.setOnClickListener(v -> {
             Intent intent = new Intent(DashboardActivity.this, OrdersActivity.class);
             startActivity(intent);
         });
+
+        fabAddProduct.setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, AddProductActivity.class);
+            startActivity(intent);
+        });
+
+        btnCategories.setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, CategoriesActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        replaceProductsFragment();
+    }
+
+    private void replaceProductsFragment() {
+        ProductsFragment productsFragment = new ProductsFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.products_fragment_container, productsFragment)
+                .commit();
     }
 }

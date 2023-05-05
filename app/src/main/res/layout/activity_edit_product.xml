@@ -6,44 +6,116 @@
     android:layout_height="match_parent"
     tools:context=".EditProductActivity">
 
-    <EditText
-        android:id="@+id/et_product_name"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/name_tile"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:text="Product Name"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:hint="Product Name"
+        android:layout_marginEnd="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/et_product_name"
+        android:layout_width="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_height="wrap_content"
+        android:hint="Product Name"
+        app:layout_constraintTop_toBottomOf="@+id/name_tile" />
+
+    <TextView
+        android:id="@+id/name_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="Product Description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_product_name" />
 
     <EditText
         android:id="@+id/et_product_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:ems="10"
         android:hint="Product Description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_product_name" />
+        app:layout_constraintTop_toBottomOf="@+id/name_description" />
+
+    <TextView
+        android:id="@+id/name_et_product_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="Product Price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_product_description" />
 
     <EditText
         android:id="@+id/et_product_price"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:ems="10"
         android:hint="Product Price"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_product_description" />
+        app:layout_constraintTop_toBottomOf="@+id/name_et_product_price" />
+
+    <TextView
+        android:id="@+id/name_et_product_list_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="Product List Price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_product_price" />
+
+    <EditText
+        android:id="@+id/et_product_list_price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:hint="Product List Price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_et_product_list_price" />
+
+    <TextView
+        android:id="@+id/name_et_product_retail_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="Product Retail Price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_product_list_price" />
+
+    <EditText
+        android:id="@+id/et_product_retail_price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:hint="Product Retail Price"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_et_product_retail_price" />
 
     <Button
         android:id="@+id/btn_update_product"
@@ -53,6 +125,6 @@
         android:text="Update Product"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_product_price" />
+        app:layout_constraintTop_toBottomOf="@+id/et_product_retail_price" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

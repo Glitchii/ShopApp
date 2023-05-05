@@ -15,8 +15,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
@@ -108,10 +111,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         contentValues.put("hobbies", hobbies);
         contentValues.put("postcode", postcode);
         contentValues.put("address", address);
-        contentValues.put("is_admin", isAdmin);
-        long newRowId = db.insert("users", null, contentValues);
-        db.close();
-        return newRowId;
+        contentValues.put("is_admin", isAdmin ? 1 : 0);
+
+        return db.insert("users", null, contentValues);
     }
 
     public long addUser(String fullName, String email, String password, String hobbies, String postcode, String address) {
@@ -317,24 +319,37 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return rowsAffected;
     }
 
-    // updateProduct(product.getId(), updatedName, updatedDescription, updatedPrice);
     /**
      * Updates the details of a product with the given ID.
      * @param id The ID of the product to be updated.
      * @param name The updated name of the product.
      * @param description The updated description of the product.
      * @param price The updated price of the product.
+     * @param listPrice The updated list price of the product.
+     * @param retailPrice The updated retail price of the product.
      * @return The number of rows affected if a product was updated, otherwise, returns 0.
      */
-    public int updateProduct(int id, String name, String description, double price) {
+    public int updateProduct(int id, String name, String description, double price, double listPrice, double retailPrice) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", name);
         contentValues.put("description", description);
         contentValues.put("price", price);
+        contentValues.put("list_price", listPrice);
+        contentValues.put("retail_price", retailPrice);
+
+        // Update the date_updated column with the current timestamp
+        contentValues.put("date_updated", getCurrentTimestamp());
+
         int rowsAffected = db.update("products", contentValues, "id = ?", new String[]{String.valueOf(id)});
         db.close();
         return rowsAffected;
+    }
+
+    private String getCurrentTimestamp() {
+        // https://stackoverflow.com/a/23068721
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        return dateFormat.format(new Date());
     }
 
     /**
@@ -366,17 +381,64 @@ public class SQLiteHelper extends SQLiteOpenHelper {
      * Adds a new category to the database with the given details.
      *
      * @param name The name of the category.
-     * @param description The description of the category.
      * @return The row ID of the newly inserted category, or -1 if an error occurred.
      */
-    public long addCategory(String name, String description) {
+    public long addCategory(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("name", name);
-        contentValues.put("description", description);
         long newRowId = db.insert("categories", null, contentValues);
         db.close();
         return newRowId;
+    }
+    
+    /**
+     * Retrieves a Category object containing all category details for a given category ID.
+     * @param id The ID of the category to be retrieved.
+     * @return A Category object containing all the category details if the category ID exists in the database, otherwise, returns null.
+     */
+    public Category getCategoryById(int id) {
+        Category category = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM categories WHERE id = ?", new String[]{String.valueOf(id)});
+
+        if (cursor.moveToFirst()) {
+            category = new Category(
+                    cursor.getInt(cursor.getColumnIndexOrThrow("id")),
+                    cursor.getString(cursor.getColumnIndexOrThrow("name"))
+            );
+        }
+
+        cursor.close();
+        db.close();
+        return category;
+    }
+
+    /**
+     * Deletes a category from the database with the given ID.
+     * @param id The ID of the category to be deleted.
+     * @return boolean indicating whether the category was deleted or not.
+     */
+    public boolean deleteCategory(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsAffected = db.delete("categories", "id = ?", new String[]{String.valueOf(id)});
+        db.close();
+        return rowsAffected > 0;
+    }
+
+    /**
+     * Updates the details of a category with the given ID.
+     * @param id The ID of the category to be updated.
+     * @param name The updated name of the category.
+     * @return The number of rows affected if a category was updated, otherwise, returns 0.
+     */
+    public int updateCategory(int id, String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", name);
+        int rowsAffected = db.update("categories", contentValues, "id = ?", new String[]{String.valueOf(id)});
+        db.close();
+        return rowsAffected;
     }
 
     public List<Order> getAllOrdersByUserId(int userId) {
@@ -493,10 +555,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst())
             do {
-                int id = cursor.getInt(cursor.getColumnIndex("id"));
-                int user_id = cursor.getInt(cursor.getColumnIndex("user_id"));
-                String status = cursor.getString(cursor.getColumnIndex("status"));
-                String date_created = cursor.getString(cursor.getColumnIndex("date_created"));
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                int user_id = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
+                String status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+                String date_created = cursor.getString(cursor.getColumnIndexOrThrow("date_created"));
 
                 Order order = new Order(id, user_id, status, date_created);
                 orders.add(order);

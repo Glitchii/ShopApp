@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/et_product_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Product Name" />
+
+        <EditText
+            android:id="@+id/et_product_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Product Price"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/et_list_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="List Price"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/et_retail_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Retail Price"
+            android:inputType="numberDecimal" />
+
+
+        <EditText
+            android:id="@+id/et_product_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Product Description"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:maxLines="5" />
+
+        <TextView
+            android:id="@+id/tv_select"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_marginLeft="3dp"
+            android:text="Select category below"/>
+
+        <!-- https://developer.android.com/develop/ui/views/components/spinner -->
+        <Spinner
+            android:id="@+id/spinner_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btn_add_product"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Add Product" />
+
+    </LinearLayout>
+</ScrollView>

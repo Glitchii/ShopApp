@@ -7,11 +7,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.Locale;
+
 public class EditProductActivity extends AppCompatActivity {
 
     private EditText etProductName;
     private EditText etProductDescription;
     private EditText etProductPrice;
+    private EditText etProductListPrice;
+    private EditText etProductRetailPrice;
     private Button btnUpdateProduct;
 
     private SQLiteHelper sqLiteHelper;
@@ -26,6 +30,8 @@ public class EditProductActivity extends AppCompatActivity {
         etProductDescription = findViewById(R.id.et_product_description);
         etProductPrice = findViewById(R.id.et_product_price);
         btnUpdateProduct = findViewById(R.id.btn_update_product);
+        etProductListPrice = findViewById(R.id.et_product_list_price);
+        etProductRetailPrice = findViewById(R.id.et_product_retail_price);
 
         sqLiteHelper = new SQLiteHelper(this);
 
@@ -38,7 +44,9 @@ public class EditProductActivity extends AppCompatActivity {
         // Set the input fields with the current product details
         etProductName.setText(product.getName());
         etProductDescription.setText(product.getDescription());
-        etProductPrice.setText(String.valueOf(product.getPrice()));
+        etProductPrice.setText(String.valueOf(String.format(Locale.getDefault(), "%.2f", product.getPrice())));
+        etProductListPrice.setText(String.format(Locale.getDefault(), "%.2f", product.getListPrice()));
+        etProductRetailPrice.setText(String.format(Locale.getDefault(), "%.2f", product.getRetailPrice()));
 
         // Set a click listener for the update button
         btnUpdateProduct.setOnClickListener(v -> {
@@ -46,9 +54,11 @@ public class EditProductActivity extends AppCompatActivity {
             String updatedName = etProductName.getText().toString();
             String updatedDescription = etProductDescription.getText().toString();
             double updatedPrice = Double.parseDouble(etProductPrice.getText().toString());
+            double updatedListPrice = Double.parseDouble(etProductListPrice.getText().toString());
+            double updatedRetailPrice = Double.parseDouble(etProductRetailPrice.getText().toString());
 
             // Update the product details in the database
-            sqLiteHelper.updateProduct(product.getId(), updatedName, updatedDescription, updatedPrice);
+            sqLiteHelper.updateProduct(product.getId(), updatedName, updatedDescription, updatedPrice, updatedListPrice, updatedRetailPrice);
 
             // Intent intent = new Intent(EditProductActivity.this, ProductDetailsActivity.class);
             Intent intent = new Intent(EditProductActivity.this, MainActivity.class);

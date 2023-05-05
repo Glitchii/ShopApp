@@ -41,7 +41,30 @@
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/product_description"
-        tools:text="0.00" />
+        tools:text="Price: 0.00" />
+
+    <TextView
+        android:id="@+id/product_list_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/product_price"
+        tools:text="List Price: 0.00" />
+
+    <TextView
+        android:id="@+id/product_retail_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/product_list_price"
+        tools:text="Retail Price: 0.00" />
+
 
     <Button
         android:id="@+id/btn_edit"
@@ -52,7 +75,7 @@
         android:layout_marginStart="16dp"
         app:layout_constraintEnd_toStartOf="@+id/btn_delete"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/product_price" />
+        app:layout_constraintTop_toBottomOf="@+id/product_retail_price" />
 
     <Button
         android:id="@+id/btn_delete"
@@ -62,7 +85,7 @@
         android:text="Delete"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toEndOf="@+id/btn_edit"
-        app:layout_constraintTop_toBottomOf="@+id/product_price" />
+        app:layout_constraintTop_toBottomOf="@+id/product_retail_price" />
 
     <Button
         android:id="@+id/btn_add_to_basket"
@@ -72,7 +95,7 @@
         android:text="Add to Basket"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toEndOf="@+id/btn_delete"
-        app:layout_constraintTop_toBottomOf="@+id/product_price" />
+        app:layout_constraintTop_toBottomOf="@+id/product_retail_price" />
 
     <Button
         android:id="@+id/btn_order"
@@ -84,7 +107,7 @@
         android:layout_marginStart="16dp"
         app:layout_constraintEnd_toStartOf="@+id/btn_delete"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/product_price" />
+        app:layout_constraintTop_toBottomOf="@+id/product_retail_price" />
 
     <Button
         android:id="@+id/btn_remove"
@@ -95,7 +118,7 @@
         android:visibility="gone"
         android:layout_marginStart="16dp"
         app:layout_constraintStart_toEndOf="@+id/btn_edit"
-        app:layout_constraintTop_toBottomOf="@+id/product_price" />
+        app:layout_constraintTop_toBottomOf="@+id/product_retail_price" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
