@@ -21,7 +21,9 @@ public class CategoriesActivity extends AppCompatActivity implements CategoriesA
     private RecyclerView rvCategories;
     private FloatingActionButton fabAddCategory;
     private SQLiteHelper sqLiteHelper;
+    private SessionManager sessionManager;
     private boolean categoriesFound = false;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,10 @@ public class CategoriesActivity extends AppCompatActivity implements CategoriesA
         rvCategories = findViewById(R.id.rv_categories);
         fabAddCategory = findViewById(R.id.fab_add_category);
         sqLiteHelper = new SQLiteHelper(this);
+        sessionManager = new SessionManager(this);
+
+        // Get user details from prefs
+        user = sessionManager.getUserDetails(this);
 
         setupCategories();
 
@@ -68,6 +74,11 @@ public class CategoriesActivity extends AppCompatActivity implements CategoriesA
     }
 
     private void showAddCategoryDialog() {
+        if (!user.isAdmin()) {
+            Toast.makeText(this, "Admin action only. Register or login as admin", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         // https://developer.android.com/develop/ui/views/components/dialogs
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Category");

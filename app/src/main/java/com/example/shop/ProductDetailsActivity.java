@@ -74,7 +74,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         tvProductListPrice.setText(String.format("List Price: £%.2f", product.getListPrice()));
         tvProductRetailPrice.setText(String.format("Retail Price: £%.2f", product.getRetailPrice()));
 
-        // Check if the user is an admin
+        // Get user details from prefs
         User user = sessionManager.getUserDetails(this);
 
         // Implement the edit and delete functionality
